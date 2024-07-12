@@ -2,11 +2,14 @@ const express = require('express');
 const router = express.Router();
 const {createBlogPost, cryptoBlogs, cricketBlogs, travelBlogs, technologyBlogs,
       scienceBlogs, healthBlogs,
-      fashionBlogs, searchBlogs, deleteBlog, allBlogs } = require("../Controller/Controller");
+      fashionBlogs, searchBlogs, deleteBlog, allBlogs,
+      getBlogById,adminLogin } = require("../Controller/Controller");
 
 router.post("/addblog", createBlogPost);
+router.post("/login", adminLogin);
 router.get("/getblog", allBlogs);
 router.get("/cryptoblog", cryptoBlogs);
+router.get("/onepost/:id", getBlogById);
 router.get("/cricketblog", cricketBlogs);
 router.get("/travelblog", travelBlogs);
 router.get("/technologyblog", technologyBlogs);

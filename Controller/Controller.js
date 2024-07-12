@@ -1,6 +1,7 @@
 
 const Blog = require("../Model/BlogSchema")
-
+const login =  require("../Model/LoginSchema")
+const mongoose = require('mongoose');
 const allBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find({});  
@@ -126,8 +127,44 @@ const createBlogPost = async (req, res) => {
   }
 };
 
+const getBlogById = async (req, res) => {
+  const blogId = req.params.id;
+    console.log(blogId)
+    // Validate the blogId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(blogId)) {
+        return res.status(400).json({ success: false, message: 'Invalid blog ID' });
+    }
+
+    try {
+        const blog = await Blog.findById(blogId);
+        if (!blog) {
+            return res.status(404).json({ success: false, message: 'Blog not found' });
+        }
+        res.json({ success: true, blog: blog });
+    } catch (error) {
+        console.error('Error fetching blog:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch blog', error: error.message });
+    }
+};
+
+const adminLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const admin = await login.findOne({ email, password });
+
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    res.status(200).json({ message: 'Admin login successful' });
+  } catch (error) {
+    console.error('Error logging in admin:', error.message);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 module.exports = {
   createBlogPost,cryptoBlogs, allBlogs,
   cricketBlogs,travelBlogs,technologyBlogs,scienceBlogs,healthBlogs,fashionBlogs,
-  searchBlogs,deleteBlog
+  searchBlogs,deleteBlog,getBlogById,adminLogin
 };
